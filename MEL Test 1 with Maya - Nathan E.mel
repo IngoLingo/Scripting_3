@@ -34,3 +34,4 @@ move -r -os -wd 0 0.5 0 ;
 makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1;
 
 print("This is cool!");
+print("Clayton Lantz is the BEST!");
