@@ -1,0 +1,36 @@
+polySphere -r 1 -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0 1 0 ;
+
+polyTorus -r 1 -sr 0.5 -tw 0 -sx 20 -sy 20 -ax 0 1 0 -cuv 1 -ch 1;
+
+polySphere -r 0.5 -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0 2 0 ;
+move -r -os -wd 1 0 0 ;
+rotate -r -os -fo 90 0 0 ;
+scale -r 1 0.2 1 ;
+
+polySphere -r 0.5 -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0 2 0 ;
+move -r -os -wd -1 0 0 ;
+rotate -r -os -fo 90 0 0 ;
+scale -r 1 0.2 1 ;
+
+polySphere -r 1 -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+scale -r 0.2 0.5 0.2 ;
+move -r -os -wd 0 1.2 1.4 ;
+rotate -r -os -fo -115 0 0 ;
+
+polySphere -r 0.2 -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd 0.4 1.6 0.6 ;
+rotate -r -os -fo 60 20 -1 ;
+
+polySphere -r 0.2 -sx 20 -sy 20 -ax 0 1 0 -cuv 2 -ch 1;
+move -r -os -wd -0.4 1.6 0.6 ;
+rotate -r -os -fo 60 -20 -1 ;
+
+select -r pSphere2 pTorus1 pSphere1 pSphere3 pSphere4 pSphere5 pSphere6 ;
+doGroup 0 1 1;
+move -r -os -wd 0 0.5 0 ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1;
+
+print("This is cool!");
