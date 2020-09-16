@@ -1,0 +1,93 @@
+{
+    
+string $allObjects[]; 
+string $tempObject[];
+string $combindObjects[];
+string $groupObjects[];
+
+//Bottle
+$tempObject = `polyCylinder -r 1 -h 2 -sx 20 -sy 3 -sz 2 -ax 0 1 0 -rcp 0 -cuv 3 -ch 1`;
+$allObjects[size($allObjects)] = $tempObject[0];
+move -r 0 1.5 0 ;
+
+select -add pCylinder1.f[80:99] pCylinder1.f[120:139] ;
+scale -r -p -1.19209e-07cm 2cm -1.78814e-07cm 0.509926 1 0.509926 ;
+
+select -add pCylinder1.e[100:119] ;
+select -add pCylinder1.e[80:99] ;
+
+scale -r -p -1.19209e-07cm 2cm -1.78814e-07cm 1.457614 1 1.457614 ;
+select -cl  ;
+dR_paintPress;
+selectPref -paintSelectRefine 1 -paintSelect 1;
+select -add pCylinder1.f[120:139] ;
+dR_paintRelease;
+selectPref -paintSelectRefine 0 -paintSelect 0;
+move -r -os -wd 0 0.886417 0 ;
+select -cl  ;
+dR_paintPress;
+selectPref -paintSelectRefine 1 -paintSelect 1;
+select -add pCylinder1.f[120:139] ;
+dR_paintRelease;
+selectPref -paintSelectRefine 0 -paintSelect 0;
+
+select -r pCylinder1.f[120:139] ;
+polyExtrudeFacet -constructionHistory 1 -keepFacesTogether 1 -pvx -9.705788584e-08 -pvy 2.886416912 -pvz -1.345112924e-07 -divisions 1 -twist 0 -taper 1 -off 0 -thickness 0 -smoothingAngle 30 pCylinder1.f[120:139];
+// Result: polyExtrudeFace1 // 
+setAttr "polyExtrudeFace1.localScale" -type double3 0.444585 0.280638 1 ;
+
+select -r pCylinder1.f[120:139] ;
+polyExtrudeFacet -constructionHistory 1 -keepFacesTogether 1 -pvx -9.705788581e-08 -pvy 2.886416912 -pvz -1.234356276e-07 -divisions 1 -twist 0 -taper 1 -off 0 -thickness 0 -smoothingAngle 30 pCylinder1.f[120:139];
+// Result: polyExtrudeFace2 // 
+setAttr "polyExtrudeFace2.localTranslate" -type double3 0 0 -2.279473 ;
+
+//Coster
+$tempObject = `polyCylinder -r 1.2 -h 2 -sx 20 -sy 1 -sz 1 -ax 0 1 0 -rcp 0 -cuv 3 -ch 1`;
+$allObjects[size($allObjects)] = $tempObject[0];
+scale -r 1 0.25 1 ;
+move -r 0 0.25 0 ;
+
+//Straw
+$tempObject = `polyCylinder -r 1 -h 2 -sx 20 -sy 1 -sz 1 -ax 0 1 0 -rcp 0 -cuv 3 -ch 1`;
+$allObjects[size($allObjects)] = $tempObject[0];
+scale -r 0.06 2 0.06 ;
+move -r -os -wd 0 3.2 0 ;
+rotate -r -os -fo -11.3 1.8 9.1 ;
+
+
+$allObjects[0] = `rename $allObjects[0] "bottle_obj"`;
+$allObjects[1] = `rename $allObjects[1] "coster_obj"`;
+$allObjects[2] = `rename $allObjects[2] "straw_obj"`;
+
+//combind
+//Note: may need to figuer out how to combine into a variable insted of just reffrincing the name
+polyUnite -ch 1 -mergeUVSets 1 -centerPivot -name "combindBottle_obj" $allObjects[0] $allObjects[1] $allObjects[2];
+$combindObjects[size($combindObjects)] = "combindBottle_obj";
+
+//group
+$groupObjects[size($groupObjects)] = `group -empty -name "Bottle_Group"`;
+
+
+//parent
+parent $combindObjects[0] $groupObjects[0] ;
+
+//Delete history and center pivot
+select -r $combindObjects[0] ;
+DeleteHistory;
+CenterPivot;
+
+//Print Stuff
+print $allObjects;
+print $tempObject;
+print $combindObjects;
+print $groupObjects;
+
+if (!objExists($groupObjects[0])) 
+{
+    print "NOPE!";
+} else 
+{
+    print "YES!";
+}
+
+}
