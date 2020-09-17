@@ -1,0 +1,184 @@
+//Check if nje_Calculator exists then delete it
+if (`window -ex "nje_Calculator"`)
+     {
+     deleteUI nje_Calculator;
+     windowPref -remove nje_Calculator;
+     }
+     
+     
+//Set Up Variables
+string $term[];
+string $termLabel;
+float $numberOfTerms;
+float $termsWindowHeight;
+
+global float $numberTest;
+$numberTest = 0;
+
+//Assign Variables
+$numberOfTerms = 5;
+$termsWindowHeight = 20*$numberOfTerms + 40;
+
+//Build the window
+window -widthHeight 100 100  -menuBar true -resizeToFitChildren true nje_Calculator;
+
+    //Frame layout
+	columnLayout;
+	        //Create a frame layout for showing current equasion
+	        /*frameLayout -label "CURRENT EQUASION";
+				rowColumnLayout -width 400 -height 50 -numberOfColumns 1;
+					text -label $numberTest;
+
+				setParent ..;
+			setParent ..;*/
+			
+			//Create a frame layout for terms
+			frameLayout -collapsable true -label "INPUT NEW TERM";
+
+				// define the layout of controls added 
+				// to the window.
+				
+				rowColumnLayout -width 400 -height $termsWindowHeight -numberOfColumns 2 -columnAttach 1 "right" 0
+                    -columnWidth 1 100 -columnWidth 2 200;
+                    
+                    //Empty Space
+                    text -label  " "; text -label  " ";
+                        
+                    //Inside the window
+            		for( $i=0; $i<$numberOfTerms; ++$i )
+            		{
+                        $termLabel = "Term " + string($i+1) + ":  ";
+                        text -label  $termLabel;
+                        string $term = `textField`;
+            		}
+                    
+                    //Empty Space
+                    text -label  " ";
+                    
+				setParent ..;
+			setParent ..;
+			
+			//Create a frame layout for terms
+			frameLayout -collapse true -collapsable true -label "TO THE POWER OF    ";
+
+				// define the layout of controls added 
+				// to the window.
+				
+				rowColumnLayout -width 400 -height $termsWindowHeight -numberOfColumns 2 -columnAttach 1 "right" 0
+                    -columnWidth 1 150 -columnWidth 2 150;
+                    
+                    //Empty Space
+                    text -label  " "; text -label  " ";
+
+                    //Inside the window
+            		for( $i=0; $i<$numberOfTerms; ++$i )
+            		{
+                        $termLabel = "Tearm " + string($i+1) + ", to the power of :  ";
+                        text -label  $termLabel;
+                        string $term = `textField`;
+            		}
+                    
+                    
+                    //Empty Space
+                    text -label  " ";
+                    
+				setParent ..;
+			setParent ..;
+
+			// create a collapsible frame layout
+			frameLayout -collapsable true -label "SELECT AN OPERATOR OR AVERAGE";
+
+				// define the layout of controls added 
+				// to the window.
+				rowColumnLayout -width 400 -height 30; 
+				    
+					//Create operator buttons
+					text -label " ";
+					text -label "Operator";
+
+				setParent ..;
+				
+				rowColumnLayout -width 400 -height 20 -columnSpacing 1 50
+				    -numberOfColumns 4 -columnWidth 1 50 -columnWidth 2 50 -columnWidth 3 50 -columnWidth 4 50
+				    -columnSpacing 2 5 -columnSpacing 3 5 -columnSpacing 4 5;
+				    
+					//Create operator buttons
+					button -label "+" -command "func"  -actOnPress false; 
+					button -label "-" -command "func"  -actOnPress false; 
+					button -label "*" -command "func"  -actOnPress false; 
+					button -label "/" -command "func"  -actOnPress false;
+
+				setParent ..;
+			//setParent ..;
+
+			// create a collapsible frame layout
+			//frameLayout -collapsable true -label "SELECT AN AVERAGE (SO FAR)";
+
+				// define the layout of controls added 
+				// to the window.
+				rowColumnLayout -width 400 -height 30; 
+				    
+					//Create operator buttons
+					text -label " ";
+					text -label "Average";
+
+				setParent ..;
+				
+				rowColumnLayout -width 400 -height 60 -columnSpacing 1 50
+				    -numberOfColumns 4 -columnWidth 1 50 -columnWidth 2 50 -columnWidth 3 50 -columnWidth 4 50
+				    -columnSpacing 2 5 -columnSpacing 3 5 -columnSpacing 4 5;
+                    
+					//Create avrage buttons					
+					button -label "mean" -command "func"  -actOnPress false; 
+					button -label "median" -command "func"  -actOnPress false; 
+					button -label "mode" -command "func"  -actOnPress false; 
+					button -label "range" -command "func"  -actOnPress false;
+
+				setParent ..;
+			setParent ..;
+
+			// create a collapsible frame layout
+			frameLayout -collapse true -collapsable true -label "FIND END RESULT    ";
+
+				// define the layout of controls added 
+				// to the window.
+				rowColumnLayout -width 400 -height 100 -numberOfColumns 2 -columnAttach 1 "right" 0
+                    -columnWidth 1 100 -columnWidth 2 200
+                    -columnSpacing 2 40;
+                    
+                    //Empty Space
+                    text -label  " "; text -label  " ";
+
+					//Create buttons
+					button -label " Quit " -command "quit"  -actOnPress false;
+					button -label "Find Results" -command "findResults"  -actOnPress false;
+					
+                    //Empty Space
+                    text -label  " ";
+
+				setParent ..;
+			setParent ..;
+
+//Run the window
+showWindow nje_Calculator;
+
+
+//Processes/Functions
+proc func() {
+    global float $numberTest;
+    $numberTest += 1;
+    showWindow nje_Calculator;
+	print($numberTest);
+}
+
+proc quit() {
+     deleteUI nje_Calculator;
+     windowPref -remove nje_Calculator;
+}
+
+proc findResults() {
+    global float $numberTest;
+    $numberTest += 1;
+    showWindow nje_Calculator;
+	print($numberTest);
+}
