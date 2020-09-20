@@ -20,7 +20,8 @@ global float $numberTest;
 $numberTest = 0;
 
 //Assign Variables
-$numberOfTerms = 4;
+$numberOfTerms = 4; //  CHANGE NUMBER OF TERMS HERE  //
+
 $termsWindowHeight = 20*$numberOfTerms + 40;
 
 
@@ -514,7 +515,8 @@ proc Mode()
     $sum = ( $listOfFloats[$maxNumber]-$listOfFloats[0] );
 	
     
-    print("\nThe Mode is " + $sum + " and it occurs " + $sum + " times.\n" ); 
+    //print("\nThe Mode is " + $sum + " and it occurs " + $sum + " times.\n" ); 
+    print("\nThe Mode is X and it occurs Y number of times.\n" ); 
 }
 
 proc Range()
