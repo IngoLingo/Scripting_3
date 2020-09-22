@@ -20,7 +20,7 @@ global float $numberTest;
 $numberTest = 0;
 
 //Assign Variables
-$numberOfTerms = 4; //  CHANGE NUMBER OF TERMS HERE  //
+$numberOfTerms = 10; //  CHANGE NUMBER OF TERMS HERE  //
 
 $termsWindowHeight = 20*$numberOfTerms + 40;
 
@@ -222,6 +222,8 @@ proc Add()
     
     float $sum = Power($floatTerm[0], $intPower[0]);
     
+	print("\n");
+	
     if ($intPower[0] == 1)
     {
         print( $floatTerm[0] + " " );
@@ -267,6 +269,8 @@ proc Subtract()
     
     float $sum = Power($floatTerm[0], $intPower[0]);
     
+	print("\n");
+	
     if ($intPower[0] == 1)
     {
         print( $floatTerm[0] + " " );
@@ -310,7 +314,9 @@ proc Multiply()
     $intPower[0] = `intField -q -value $stringPower[0]`;
     
     float $sum = Power($floatTerm[0], $intPower[0]);
-    
+	
+	print("\n");
+	
     if ($intPower[0] == 1)
     {
         print( $floatTerm[0] + " " );
@@ -356,6 +362,8 @@ proc Divide()
     
     float $sum = Power($floatTerm[0], $intPower[0]);
     
+	print("\n");
+	
     if ($intPower[0] == 1)
     {
         print( $floatTerm[0] + " " );
@@ -394,6 +402,7 @@ proc Mean()
     global string $stringTerm[];
     global float $floatTerm[];
     
+    float $listOfFloats[];
     global string $stringPower[];
     global int $intPower[];
     
@@ -402,15 +411,33 @@ proc Mean()
     
     float $sum = Power($floatTerm[0], $intPower[0]);
     
+    //Prints the list of numbers in order
+    print("\nFor these numbers:\n");
+    for( $i=0; $i<$numberOfTerms; ++$i )
+	{
+        $floatTerm[$i] = `floatField -q -value $stringTerm[$i]`;
+        $intPower[$i] = `intField -q -value $stringPower[$i]`;
+        
+	    $listOfFloats[$i] = Power($floatTerm[$i], $intPower[$i]);
+	    //print($listOfFloats[$i] + ", ");
+	}
+    
+    $listOfFloats = `sort $listOfFloats`;
+
+    for( $i=0; $i<$numberOfTerms; ++$i )
+	{
+	    print($listOfFloats[$i] + ", ");
+	}
+	
     print("\nThe Mean is:\n");
-    if ($intPower[0] == 1)
+    /*if ($intPower[0] == 1)
     {
         print( "( " + $floatTerm[0] + " " );
     }
     else
     {
         print( $floatTerm[0] + "^" + $intPower[0] + " " );
-    }
+    }*/
     
 	for( $i=1; $i<$numberOfTerms; ++$i )
 	{
@@ -419,20 +446,21 @@ proc Mean()
     
         $sum += Power($floatTerm[$i], $intPower[$i]);
         
-        if ($intPower[$i] == 1)
+        /*if ($intPower[$i] == 1)
         {
             print("+ " + $floatTerm[$i] + " ");
         }
         else
         {
             print( "+ " + $floatTerm[$i] + "^" + $intPower[$i] + " " );
-        }
+        }*/
         
     }
     
     $sum /= $numberOfTerms;
     
-	print(") / " + $numberOfTerms + " = " + $sum +"\n");
+	//print(") / " + $numberOfTerms + " = " + $sum +"\n");
+	print($sum +"\n");
 }
 
 proc Median()
@@ -490,10 +518,16 @@ proc Mode()
     global string $stringPower[];
     global int $intPower[];
     
-    float $listOfFloats[];
+    float $listOfFloats[]; //this  is the final value after addind the power
     int $maxNumber;
     float $sum;
     
+    float $uniqeTerm[]; //storing uniqe terms
+    int $uniqeTermFrequency[]; //storing how many times the uniqe term occours
+    int $maxIndex = 0; //stores the index of the max number;
+    int $maxIndexDup = 0;
+    
+    //Prints the list of numbers in order
     print("\nFor these numbers:\n");
     for( $i=0; $i<$numberOfTerms; ++$i )
 	{
@@ -511,12 +545,53 @@ proc Mode()
 	    print($listOfFloats[$i] + ", ");
 	}
 	
-    $maxNumber = $numberOfTerms-1;
-    $sum = ( $listOfFloats[$maxNumber]-$listOfFloats[0] );
+	//Finds and counts uniqe terms
+    for( $i=0; $i<$numberOfTerms; ++$i )
+	{
+	   if ( !floatArrayContains($listOfFloats[$i], $uniqeTerm) )
+	   {
+	       $uniqeTerm[size($uniqeTerm)] = $listOfFloats[$i];
+	       $uniqeTermFrequency[size($uniqeTerm)] = 1;
+	   }
+	   else
+	   {
+	       int $index;
+	       $index = floatArrayFind( $listOfFloats[$i], 0, $uniqeTerm );
+	       $uniqeTermFrequency[$index] += 1;
+	   }
+	}
+	$uniqeTermFrequency[0] += 1; //fix a weird bug where the first unit in the 0 index is not counted
 	
-    
-    //print("\nThe Mode is " + $sum + " and it occurs " + $sum + " times.\n" ); 
-    print("\nThe Mode is X and it occurs Y number of times.\n" ); 
+	//Display uniqe terms and frequency and finds number that occours the most
+    for( $i=0; $i<size($uniqeTerm); ++$i )
+	{
+	    //print("\nThe number " + $uniqeTerm[$i] + " occurs " + $uniqeTermFrequency[$i] + " times");
+
+	    if ( $uniqeTermFrequency[$i] >= $uniqeTermFrequency[$maxIndex] )
+	    {
+    	    if ( $uniqeTermFrequency[$i] > $uniqeTermFrequency[$maxIndex] )
+    	    {
+    	        $maxIndexDup = 1;
+    	        $maxIndex = $i;
+    	    }
+    	    else if ( $uniqeTermFrequency[$i] == $uniqeTermFrequency[$maxIndex] )
+    	    {
+    	        $maxIndexDup += 1;
+    	    }
+	    }
+	    
+	}
+	
+    //Find the number that occurs the most and print it
+    if ($maxIndexDup == 1)
+    {
+        print("\nThe MODE is " + $uniqeTerm[$maxIndex] + " and it occurs " + $uniqeTermFrequency[$maxIndex] + " times.\n" );
+    }
+    else
+    {
+        print("\nThere are " + $maxIndexDup + " MODES.\n" );
+    }
+     
 }
 
 proc Range()
