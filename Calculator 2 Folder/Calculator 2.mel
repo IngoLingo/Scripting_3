@@ -1,0 +1,360 @@
+//Initiate Variables
+float $floatTerm[] = { 1,2,3,4,5 };     // INPUT TERMS HERE //
+int $defaultPower = 1;                  // INPUT POWER HERE //
+string $operation = "+";                // INPUT OPERATOR HERE //
+//Operators: + - * / mean median mode range
+
+//powerNumbers
+int $intPower[];
+for ( $i=0; $i<size($floatTerm); $i++ )
+{
+    $intPower[$i] = $defaultPower;
+}
+
+
+///OperatorProcedures
+
+// Power
+global proc float Power(float $term, int $power)
+{
+    float $final = 1;
+	
+	if ($power > 0)
+	{
+        for( $i=0; $i<$power; $i++ )
+    	{
+    	    $final *= $term;
+    	}
+	}
+	else if ($power < 0)
+	{
+        for( $i=0; $i>$power; $i-- )
+    	{
+    	    $final /= $term;
+    	}
+	}
+	else
+	{
+        $final = 1;
+	}
+	if ($power != 1)
+	{
+	    print($term + "^" + $power + ", ");
+	}
+	else
+	{
+	    print($term + ", ");
+	}
+    return ($final);
+}
+
+//Operators
+// Add
+global proc Add(float $input[])
+{
+    print("Addition:\n");
+    
+    // Print first input and put it into the final total
+    float $finalTotal = $input[0];
+    print($input[0] + " ");
+    
+    // Loop to find final total and print out operator with input after the first input
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        $finalTotal += $input[$i];
+        print("+ " + $input[$i] + " ");
+    }
+    
+    // Print final total at the end of the equasion
+    print("= " + $finalTotal);
+    clear($input);
+    //return ($finalTotal)
+}
+
+// Subtract
+global proc Subtract(float $input[])
+{
+    print("Subtraction:\n");
+    
+    // Print first input and put it into the final total
+    float $finalTotal = $input[0];
+    print($input[0] + " ");
+    
+    // Loop to find final total and print out operator with input after the first input
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        $finalTotal -= $input[$i];
+        print("- " + $input[$i] + " ");
+    }
+    
+    // Print final total at the end of the equasion
+    print("= " + $finalTotal);
+    clear($input);
+    //return ($finalTotal)
+}
+
+// Multiply
+global proc Multiply(float $input[])
+{
+    print("Multiplication:\n");
+    
+    // Print first input and put it into the final total
+    float $finalTotal = $input[0];
+    print($input[0] + " ");
+    
+    // Loop to find final total and print out operator with input after the first input
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        $finalTotal *= $input[$i];
+        print("x " + $input[$i] + " ");
+    }
+    
+    // Print final total at the end of the equasion
+    print("= " + $finalTotal);
+    clear($input);
+    //return ($finalTotal)
+}
+
+// Divide
+global proc Divide(float $input[])
+{
+    print("Division:\n");
+    
+    // Print first input and put it into the final total
+    float $finalTotal = $input[0];
+    print($input[0] + " ");
+    
+    // Loop to find final total and print out operator with input after the first input
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        $finalTotal /= $input[$i];
+        print("/ " + $input[$i] + " ");
+    }
+    
+    // Print final total at the end of the equasion
+    print("= " + $finalTotal);
+    clear($input);
+    //return ($finalTotal)
+}
+
+///AverageProcedures
+
+// Mean
+global proc Mean(float $input[])
+{
+    print("For these numbers:\n");
+    
+    float $sum = $input[0];
+    print($input[0]);
+    
+    // Add inputs together
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        $sum += $input[$i];
+        print(", " + $input[$i]);
+    }
+    
+    // Devide total by number of inputs
+    $sum /= size($input);
+    print("\nThe Mean is:\n" + $sum);
+    clear($input);
+}
+
+// Median
+global proc Median(float $input[])
+{
+    print("For these numbers:\n");
+    
+    float $sum;
+    int $numberOfTerms = `size($input)`;
+    int $medianNumber;
+    
+    // print inputs together
+    print($input[0]);
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        print(", " + $input[$i]);
+    }
+    
+    // Find center number or devide the 2 center by 2
+	if ($numberOfTerms%2 == 0) //check if even
+	{
+	    $medianNumber = ceil(($numberOfTerms)/2);
+        $sum = ( $input[$medianNumber-1]+$input[$medianNumber] )/2;
+	}
+	else //if odd
+	{
+	    $medianNumber = ceil(($numberOfTerms)/2);
+        $sum = $input[$medianNumber];
+	}
+    
+    print("\nThe Median is:\n" + $sum);
+    clear($input);
+}
+
+// Mode
+global proc Mode(float $input[])
+{
+    print("For these numbers:\n");
+    
+    float $uniqeTerm[]; //storing uniqe terms
+    int $uniqeTermFrequency[]; //storing how many times the uniqe term occours
+    int $maxIndex = 0; //stores the index of the max number;
+    int $maxIndexDup = 0;
+        
+    // Print inputs together
+    print($input[0]);
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        print(", " + $input[$i]);
+    }
+    
+    // Finds and counts uniqe terms
+    for( $i=0; $i<size($input); ++$i )
+	{
+	   if ( !floatArrayContains($input[$i], $uniqeTerm) )
+	   {
+	       $uniqeTerm[size($uniqeTerm)] = $input[$i];
+	       $uniqeTermFrequency[size($uniqeTerm)] = 1;
+	   }
+	   else
+	   {
+	       int $index;
+	       $index = floatArrayFind( $input[$i], 0, $uniqeTerm );
+	       $uniqeTermFrequency[$index] += 1;
+	   }
+	}
+	$uniqeTermFrequency[0] += 1; //fix a weird bug where the first unit in the 0 index is not counted
+	
+	//Display uniqe terms and frequency and finds number that occours the most
+    for( $i=0; $i<size($uniqeTerm); ++$i )
+	{
+	    //print("\nThe number " + $uniqeTerm[$i] + " occurs " + $uniqeTermFrequency[$i] + " times");
+
+	    if ( $uniqeTermFrequency[$i] >= $uniqeTermFrequency[$maxIndex] )
+	    {
+    	    if ( $uniqeTermFrequency[$i] > $uniqeTermFrequency[$maxIndex] )
+    	    {
+    	        $maxIndexDup = 1;
+    	        $maxIndex = $i;
+    	    }
+    	    else if ( $uniqeTermFrequency[$i] == $uniqeTermFrequency[$maxIndex] )
+    	    {
+    	        $maxIndexDup += 1;
+    	    }
+	    }
+	    
+	}
+	
+    //Find the number that occurs the most and print it
+    if ($maxIndexDup == 1)
+    {
+        print("\nThe MODE is " + $uniqeTerm[$maxIndex] + " and it occurs " + $uniqeTermFrequency[$maxIndex] + " times.\n" );
+    }
+    else
+    {
+        print("\nThere are " + $maxIndexDup + " MODES.\n" );
+    }
+    clear($input);
+	
+}
+
+// Range
+global proc Range(float $input[])
+{
+    print("For these numbers:\n");
+    
+    float $sum;
+    int $maxNumber = size($input)-1;
+    
+    // Print inputs together
+    print($input[0]);
+    for ( $i=1; $i<size($input); $i++ )
+    {
+        print(", " + $input[$i]);
+    }
+    
+    // Grab largest and smallest number and subtract them
+    $sum  = ( $input[$maxNumber]-$input[0] );
+    print("\nThe Range is:\n" + $sum);
+    clear($input);
+}
+
+///NumberCalculationFunctions
+//source OperatorProcedures;
+//source AverageProcedures;
+
+global proc float Calculate(float $numbers[], string $procUsing) 
+{
+    float $return;
+    
+    if ($procUsing == "add" || $procUsing == "+") 
+    {
+        $return = Add($numbers);
+    }
+    else if ($procUsing == "subtract" || $procUsing == "-") 
+    {
+        $return = Subtract($numbers);
+    }
+    else if ($procUsing == "multiply" || $procUsing == "x" || $procUsing == "*") 
+    {
+        $return = Multiply($numbers);
+    }
+    else if ($procUsing == "divide" || $procUsing == "/") 
+    {
+        $return = Divide($numbers);
+    }
+    else if ($procUsing == "mean") 
+    {
+        $numbers = `sort $numbers`;
+        $return = Mean($numbers);
+    }
+    else if ($procUsing == "median") 
+    {
+        $numbers = `sort $numbers`;
+        $return = Median($numbers);
+    }
+    else if ($procUsing == "mode") 
+    {
+        $numbers = `sort $numbers`;
+        $return = Mode($numbers);
+    }
+    else if ($procUsing == "range") 
+    {
+        $numbers = `sort $numbers`;
+        $return = Range($numbers);
+    }
+    else
+    {
+        $return = print("Invaled Procedures Called\n");
+    }
+    
+    return $return;
+}
+
+///Calculator_Index
+//source NumberCalculationProcedures;
+
+//termNumbers
+/*float $floatTerm[] = { 7,2,1,7,1,2,6,7 };
+int $defaultPower = 2;
+string $operation = "+";
+
+//powerNumbers
+int $intPower[];
+for ( $i=0; $i<size($floatTerm); $i++ )
+{
+    $intPower[$i] = $defaultPower;
+}*/
+
+//combine terms and their powers
+print("\nTerms (and Powers):\n");
+float $floatPoweredTerm[];
+for ( $i=0; $i<size($floatTerm); $i++ )
+{
+    $floatPoweredTerm[$i] = Power($floatTerm[$i], $intPower[$i]);
+}
+print("\n\n");
+Calculate($floatPoweredTerm, $operation);
+print("\n\n");
+clear($floatTerm);

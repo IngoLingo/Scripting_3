@@ -1,0 +1,214 @@
+// power function
+global proc float Power(float $t, int $p)
+{
+    float $final = 1;
+    
+    if ($p > 0)
+    {
+        for( $i=0; $i<$p; $i++ )
+    	{
+    	    $final *= $t;
+    	}
+    }
+    else if ($p < 0)
+    {
+        for( $i=0; $i>$p; $i-- )
+    	{
+    	    $final /= $t;
+    	}
+    }
+    else
+    {
+        $final = 1;
+    }
+	
+	return ($final);
+}
+
+// operator functions
+global proc Add()
+{
+    global float $numberOfTerms;
+    
+    global string $stringTerm[];
+    global float $floatTerm[];
+    
+    global string $stringPower[];
+    global int $intPower[];
+    
+    $floatTerm[0] = `floatField -q -value $stringTerm[0]`;
+    $intPower[0] = `intField -q -value $stringPower[0]`;
+    
+    float $sum = Power($floatTerm[0], $intPower[0]);
+    
+	print("\n");
+	
+    if ($intPower[0] == 1)
+    {
+        print( $floatTerm[0] + " " );
+    }
+    else
+    {
+        print( $floatTerm[0] + "^" + $intPower[0] + " " );
+    }
+    
+	for( $i=1; $i<$numberOfTerms; ++$i )
+	{
+        $floatTerm[$i] = `floatField -q -value $stringTerm[$i]`;
+        $intPower[$i] = `intField -q -value $stringPower[$i]`;
+    
+        $sum += Power($floatTerm[$i], $intPower[$i]);
+        
+        if ($intPower[$i] == 1)
+        {
+            print("+ " + $floatTerm[$i] + " ");
+        }
+        else
+        {
+            print( "+ " + $floatTerm[$i] + "^" + $intPower[$i] + " " );
+        }
+        
+    }
+    
+	print("= "+ $sum +"\n");
+}
+
+global proc Subtract()
+{
+    global float $numberOfTerms;
+    
+    global string $stringTerm[];
+    global float $floatTerm[];
+    
+    global string $stringPower[];
+    global int $intPower[];
+    
+    $floatTerm[0] = `floatField -q -value $stringTerm[0]`;
+    $intPower[0] = `intField -q -value $stringPower[0]`;
+    
+    float $sum = Power($floatTerm[0], $intPower[0]);
+    
+	print("\n");
+	
+    if ($intPower[0] == 1)
+    {
+        print( $floatTerm[0] + " " );
+    }
+    else
+    {
+        print( $floatTerm[0] + "^" + $intPower[0] + " " );
+    }
+    
+	for( $i=1; $i<$numberOfTerms; ++$i )
+	{
+        $floatTerm[$i] = `floatField -q -value $stringTerm[$i]`;
+        $intPower[$i] = `intField -q -value $stringPower[$i]`;
+    
+        $sum -= Power($floatTerm[$i], $intPower[$i]);
+        
+        if ($intPower[$i] == 1)
+        {
+            print("- " + $floatTerm[$i] + " ");
+        }
+        else
+        {
+            print( "- " + $floatTerm[$i] + "^" + $intPower[$i] + " " );
+        }
+        
+    }
+    
+	print("= "+ $sum +"\n");
+}
+global proc Multiply()
+{
+    global float $numberOfTerms;
+    
+    global string $stringTerm[];
+    global float $floatTerm[];
+    
+    global string $stringPower[];
+    global int $intPower[];
+    
+    $floatTerm[0] = `floatField -q -value $stringTerm[0]`;
+    $intPower[0] = `intField -q -value $stringPower[0]`;
+    
+    float $sum = Power($floatTerm[0], $intPower[0]);
+	
+	print("\n");
+	
+    if ($intPower[0] == 1)
+    {
+        print( $floatTerm[0] + " " );
+    }
+    else
+    {
+        print( $floatTerm[0] + "^" + $intPower[0] + " " );
+    }
+    
+	for( $i=1; $i<$numberOfTerms; ++$i )
+	{
+        $floatTerm[$i] = `floatField -q -value $stringTerm[$i]`;
+        $intPower[$i] = `intField -q -value $stringPower[$i]`;
+    
+        $sum *= Power($floatTerm[$i], $intPower[$i]);
+        
+        if ($intPower[$i] == 1)
+        {
+            print("* " + $floatTerm[$i] + " ");
+        }
+        else
+        {
+            print( "* " + $floatTerm[$i] + "^" + $intPower[$i] + " " );
+        }
+        
+    }
+    
+	print("= "+ $sum +"\n");
+}
+
+global proc Divide()
+{
+    global float $numberOfTerms;
+    
+    global string $stringTerm[];
+    global float $floatTerm[];
+    
+    global string $stringPower[];
+    global int $intPower[];
+    
+    $floatTerm[0] = `floatField -q -value $stringTerm[0]`;
+    $intPower[0] = `intField -q -value $stringPower[0]`;
+    
+    float $sum = Power($floatTerm[0], $intPower[0]);
+    
+	print("\n");
+	
+    if ($intPower[0] == 1)
+    {
+        print( $floatTerm[0] + " " );
+    }
+    else
+    {
+        print( $floatTerm[0] + "^" + $intPower[0] + " " );
+    }
+    
+	for( $i=1; $i<$numberOfTerms; ++$i )
+	{
+        $floatTerm[$i] = `floatField -q -value $stringTerm[$i]`;
+        $intPower[$i] = `intField -q -value $stringPower[$i]`;
+    
+        $sum /= Power($floatTerm[$i], $intPower[$i]);
+        
+        if ($intPower[$i] == 1)
+        {
+            print("/ " + $floatTerm[$i] + " ");
+        }
+        else
+        {
+            print( "/ " + $floatTerm[$i] + "^" + $intPower[$i] + " " );
+        }
+        
+    }
+    
+	print("= "+ $sum +"\n");
+}
