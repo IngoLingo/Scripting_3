@@ -1,0 +1,21 @@
+//Color to change too
+int $newColor = 5;
+
+//Store currently selected objects and their shape into a list
+string $controleSelected[] = `ls -selection`;
+string $shapeControleName[] = `listRelatives -shapes -path $controleSelected`;
+
+//Iterate through selected objects
+for ( $i=0; $i<size($shapeControleName); $i++ )
+{
+    // Enable Override
+    setAttr ($shapeControleName[$i] + ".overrideEnabled") 1;
+    // Change Color
+    setAttr ($shapeControleName[$i] + ".overrideColor") ($newColor);
+}
+print("\n");
+print($shapeControleName);
+print("\n");
+
+clear($controleSelected);
+clear($shapeControleName);
