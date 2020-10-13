@@ -1,0 +1,22 @@
+proc RandomPlacement( int $numOfDupes, float $minX, float $maxX, float $minY, float $maxY, float $minZ, float $maxZ )
+{
+    string $selectionsToDuplicat[] = `ls -sl`;
+    
+    // For/in loop selecting each uniqe object
+    for( $selected in $selectionsToDuplicat )
+    {
+        // For loop duplicating each uniqe object
+        for ( $i = 0; $i < $numOfDupes; $i++ )
+        {
+            duplicate -rr $selected;
+            float $randX = `rand $minX $maxX`;
+            float $randY = `rand $minY $maxY`;
+            float $randZ = `rand $minZ $maxZ`;
+            
+            xform -translation $randX $randY $randZ $selected;
+            
+        }
+    }
+}
+
+RandomPlacement( 50, -10, 10, -10, 10, -10, 10 );
