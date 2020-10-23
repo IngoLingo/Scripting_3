@@ -4,7 +4,7 @@ import maya.cmds as cmds
 selectionGroupRK = cmds.ls( selection=True );
 selectionFirstJointInRK = cmds.listRelatives(selectionGroupRK[0], children=True, type='joint')[0];
 selectionParentOfGroupRK = cmds.listRelatives(selectionGroupRK[0], parent=True, type='joint')[0];
-lastJointForIK_FK = 'L_Wrist_Jnt_RK';
+lastJointForIKFK = 'L_Wrist_Jnt_RK';
 
 stringSideToReplace = 'L_';
 stringSideReplaceWith = 'R_';
@@ -41,3 +41,23 @@ selectionGroupFK = selectionGroupRK.replace(stringRKToReplace, stringFKReplaceWi
 #print selectionGroupFK[0:];
 
 #print cmds.listRelatives(selectionGroupFK, allDescendents=True, type='joint')[3:];
+
+#To Do Next:
+#Put RK Left and Right group joints into 2 seporate lists
+#Put IK Left and Right group joints into 2 seporate lists
+#Put FK Left and Right group joints into 2 seporate lists
+
+#Find and delete the childs of the joints in the 'lastJointForIKFK' Var for all of the IK and FK lists
+
+#Make a colord control (and groups) for each FK joint and orient them properly
+#Make a colord control (and groups) for the begining and the end of the IK joints and orient them properly
+#Make an IK PV control for the IK joints and orient them properly
+#Make a colord control (and groups) for each RK joint after the 'lastJointForIKFK' Var and orient them properly
+
+#Bind the RK to the IK and FK joints correctly
+#Bind each control to the correct joint
+
+#Remind user to bind joints to the mesh.
+
+
+
