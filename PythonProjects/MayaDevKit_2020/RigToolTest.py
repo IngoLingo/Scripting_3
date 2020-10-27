@@ -36,20 +36,59 @@ for obj in selectionGroupFK[1:]: #Rename desendents in FK group
     newName = obj.replace(stringRKToReplace, stringFKReplaceWith)[0:-1]
     cmds.rename(obj, newName)
 
+#Replace RK indicator with FK indicator
 selectionGroupFK = selectionGroupRK.replace(stringRKToReplace, stringFKReplaceWith);
 
-#print selectionGroupFK[0:];
+#Find and delete the childs of the joints in the 'lastJointForIKFK' Var for all of the IK and FK lists
+cmds.delete( cmds.listRelatives(lastJointForIKFK.replace(stringRKToReplace, stringIKReplaceWith), children=True) );
+cmds.delete( cmds.listRelatives(lastJointForIKFK.replace(stringRKToReplace, stringFKReplaceWith), children=True) );
+lastJointForIKFK = lastJointForIKFK.replace(stringSideToReplace, stringSideReplaceWith)
+cmds.delete( cmds.listRelatives(lastJointForIKFK.replace(stringRKToReplace, stringIKReplaceWith), children=True) );
+cmds.delete( cmds.listRelatives(lastJointForIKFK.replace(stringRKToReplace, stringFKReplaceWith), children=True) );
 
-#print cmds.listRelatives(selectionGroupFK, allDescendents=True, type='joint')[3:];
+#Put RK Left and Right group joints into 2 seporate lists
+originRKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK, children=True)[0], allDescendents=True, type='joint');
+otherRKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK, children=True)[1], allDescendents=True, type='joint');
+
+#Put IK Left and Right group joints into 2 seporate lists
+originIKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(stringRKToReplace, stringIKReplaceWith), children=True)[0], allDescendents=True, type='joint');
+otherIKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(stringRKToReplace, stringIKReplaceWith), children=True)[1], allDescendents=True, type='joint');
+
+#Put FK Left and Right group joints into 2 seporate lists
+originFKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(stringRKToReplace, stringFKReplaceWith), children=True)[0], allDescendents=True, type='joint');
+otherFKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(stringRKToReplace, stringFKReplaceWith), children=True)[1], allDescendents=True, type='joint');
 
 #To Do Next:
-#Put RK Left and Right group joints into 2 seporate lists
-#Put IK Left and Right group joints into 2 seporate lists
-#Put FK Left and Right group joints into 2 seporate lists
-
-#Find and delete the childs of the joints in the 'lastJointForIKFK' Var for all of the IK and FK lists
+#Make _Controls master group to put all controls in
+parentControl = cmds.group( empty = True, name = 'FK_Control_Group' );
+masterControlGroup = parentControl;
 
 #Make a colord control (and groups) for each FK joint and orient them properly
+n = 0;
+originFKGroup.reverse(); #reverses the order of the group
+for obj in originFKGroup:
+    newName = originFKGroup[n].replace(stringFKReplaceWith, '').replace('Jnt', 'Ctrl');
+    newControl = cmds.circle( name = newName );
+    # Add rotate circle control
+    newControlGroup = cmds.group(newControl, name = newName + 'Grp', parent = parentControl);
+    cmds.matchTransform(newControlGroup, originFKGroup[n]);
+    #Add freaze transforms
+    parentControl = newControl[0];
+    n += 1;
+
+parentControl = masterControlGroup;
+n = 0;
+otherFKGroup.reverse(); #reverses the order of the group
+for obj in otherFKGroup:
+    newName = otherFKGroup[n].replace(stringFKReplaceWith, '').replace('Jnt', 'Ctrl');
+    newControl = cmds.circle( name = newName );
+    #Add rotate circle control
+    newControlGroup = cmds.group(newControl, name = newName + 'Grp', parent = parentControl);
+    cmds.matchTransform(newControlGroup, otherFKGroup[n]);
+    #Add freaze transforms
+    parentControl = newControl[0];
+    n += 1;
+
 #Make a colord control (and groups) for the begining and the end of the IK joints and orient them properly
 #Make an IK PV control for the IK joints and orient them properly
 #Make a colord control (and groups) for each RK joint after the 'lastJointForIKFK' Var and orient them properly
