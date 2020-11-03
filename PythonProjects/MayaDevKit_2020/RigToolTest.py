@@ -58,7 +58,7 @@ otherIKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(st
 originFKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(stringRKToReplace, stringFKReplaceWith), children=True)[0], allDescendents=True, type='joint');
 otherFKGroup = cmds.listRelatives(cmds.listRelatives(selectionGroupRK.replace(stringRKToReplace, stringFKReplaceWith), children=True)[1], allDescendents=True, type='joint');
 
-#To Do Next:
+#Maybe add colors
 #Make _Controls master group to put all controls in
 parentControl = cmds.group( empty = True, name = 'FK_Control_Group' );
 masterControlGroup = parentControl;
@@ -67,12 +67,12 @@ masterControlGroup = parentControl;
 n = 0;
 originFKGroup.reverse(); #reverses the order of the group
 for obj in originFKGroup:
-    newName = originFKGroup[n].replace(stringFKReplaceWith, '').replace('Jnt', 'Ctrl');
+    newName = originFKGroup[n].replace('Jnt', 'Ctrl');
     newControl = cmds.circle( name = newName );
-    # Add rotate circle control
+    cmds.setAttr( newControl[0]+'.rotateY', 90 );
     newControlGroup = cmds.group(newControl, name = newName + 'Grp', parent = parentControl);
     cmds.matchTransform(newControlGroup, originFKGroup[n]);
-    #Add freaze transforms
+    cmds.makeIdentity(newControl[0], apply = True);
     parentControl = newControl[0];
     n += 1;
 
@@ -80,20 +80,121 @@ parentControl = masterControlGroup;
 n = 0;
 otherFKGroup.reverse(); #reverses the order of the group
 for obj in otherFKGroup:
-    newName = otherFKGroup[n].replace(stringFKReplaceWith, '').replace('Jnt', 'Ctrl');
+    newName = otherFKGroup[n].replace('Jnt', 'Ctrl');
     newControl = cmds.circle( name = newName );
-    #Add rotate circle control
+    cmds.setAttr( newControl[0]+'.rotateY', 90 );
     newControlGroup = cmds.group(newControl, name = newName + 'Grp', parent = parentControl);
     cmds.matchTransform(newControlGroup, otherFKGroup[n]);
-    #Add freaze transforms
+    cmds.makeIdentity(newControl[0], apply = True);
     parentControl = newControl[0];
     n += 1;
 
 #Make a colord control (and groups) for the begining and the end of the IK joints and orient them properly
-#Make an IK PV control for the IK joints and orient them properly
-#Make a colord control (and groups) for each RK joint after the 'lastJointForIKFK' Var and orient them properly
+# Original Side
+parentControl = cmds.group( empty = True, name = 'IK_Control_Group' );
+masterControlGroup = parentControl;
 
+newName = originIKGroup[-1].replace('Jnt', 'Ctrl');
+newControl = cmds.circle(name=newName);
+cmds.setAttr(newControl[0] + '.rotateY', 90);
+newControlGroup = cmds.group(newControl, name=newName + 'Grp', parent=parentControl);
+cmds.matchTransform(newControlGroup, originIKGroup[0]);
+cmds.makeIdentity(newControl[0], apply=True);
+
+newName = originIKGroup[-1].replace('Jnt', 'Base_Ctrl');
+newControl = cmds.circle(name=newName);
+cmds.setAttr(newControl[0] + '.rotateY', 90);
+newControlGroup = cmds.group(newControl, name=newName + 'Grp', parent=parentControl);
+cmds.matchTransform(newControlGroup, originIKGroup[-1]);
+cmds.makeIdentity(newControl[0], apply=True);
+# Other side
+newName = otherIKGroup[-1].replace('Jnt', 'Ctrl');
+newControl = cmds.circle(name=newName);
+cmds.setAttr(newControl[0] + '.rotateY', 90);
+newControlGroup = cmds.group(newControl, name=newName + 'Grp', parent=parentControl);
+cmds.matchTransform(newControlGroup, otherIKGroup[0]);
+cmds.makeIdentity(newControl[0], apply=True);
+
+newName = otherIKGroup[-1].replace('Jnt', 'Base_Ctrl');
+newControl = cmds.circle(name=newName);
+cmds.setAttr(newControl[0] + '.rotateY', 90);
+newControlGroup = cmds.group(newControl, name=newName + 'Grp', parent=parentControl);
+cmds.matchTransform(newControlGroup, otherIKGroup[-1]);
+cmds.makeIdentity(newControl[0], apply=True);
+
+#Make an IK PV control for the IK joints and orient them properly
+newName = originIKGroup[-1].replace('Jnt', 'PV_Offset_Grp');
+newPV = cmds.circle(name=newName);
+selectShapeNode = cmds.listRelatives(newPV[0], shapes=True);
+cmds.delete(selectShapeNode);
+newName = originIKGroup[-1].replace('Jnt', 'PV_Ctrl');
+newControl = cmds.circle(name=newName);
+#cmds.select(newControl.cv.[0,2,4,6]);
+#cmds.scale( newControl.cv.[0,2,4,6], relative = True, pivot = (-9cm, 0, 0) )
+cmds.parent(newControl, newPV);
+newControlGroup = cmds.group(newPV, name=newName + 'Grp', parent=parentControl);
+cmds.matchTransform(newControlGroup, originIKGroup[-2]);
+cmds.setAttr(newPV[0] + '.translateY', -10);
+cmds.makeIdentity(newControl[0], apply=True);
+
+newName = otherIKGroup[-1].replace('Jnt', 'PV_Offset_Grp');
+newPV = cmds.circle(name=newName);
+selectShapeNode = cmds.listRelatives(newPV[0], shapes=True);
+cmds.delete(selectShapeNode);
+newName = otherIKGroup[-1].replace('Jnt', 'PV_Ctrl');
+newControl = cmds.circle(name=newName);
+#cmds.select(newControl.cv.[0,2,4,6]);
+#cmds.scale( newControl.cv.[0,2,4,6], relative = True, pivot = (-9cm, 0, 0) )
+cmds.parent(newControl, newPV);
+newControlGroup = cmds.group(newPV, name=newName + 'Grp', parent=parentControl);
+cmds.matchTransform(newControlGroup, otherIKGroup[-2]);
+cmds.setAttr(newPV[0] + '.translateY', 10);
+cmds.makeIdentity(newControl[0], apply=True);
+
+#Make a colord control (and groups) for each RK joint after the 'lastJointForIKFK' Var and orient them properly
+# Original RK Controls
+parentControl = cmds.group( empty = True, name = 'RK_Control_Group' );
+masterControlGroup = parentControl;
+
+n = 0;
+originRKGroup.reverse(); #reverses the order of the group
+controlListForRK = originRKGroup[originRKGroup.index(lastJointForIKFK.replace(stringSideReplaceWith, stringSideToReplace))+1:]
+
+for obj in controlListForRK:
+    if cmds.listRelatives(controlListForRK[n], children=True, type='joint') != None:
+        newName = controlListForRK[n].replace('Jnt', 'Ctrl');
+        newControl = cmds.circle( name = newName );
+        cmds.setAttr( newControl[0]+'.rotateY', 90 );
+        newControlGroup = cmds.group(newControl, name = newName + 'Grp', parent = parentControl);
+        cmds.matchTransform(newControlGroup, controlListForRK[n]);
+        cmds.makeIdentity(newControl[0], apply = True);
+
+        if len(cmds.listRelatives(controlListForRK[n], children=True, type='joint')) > 1:
+            parentControl = newControl[0];
+    n += 1;
+
+# Other RK Controls
+parentControl = masterControlGroup;
+n = 0;
+otherRKGroup.reverse(); #reverses the order of the group
+controlListForRK = otherRKGroup[otherRKGroup.index(lastJointForIKFK)+1:]
+for obj in controlListForRK:
+    if cmds.listRelatives(controlListForRK[n], children=True, type='joint') != None:
+
+        newName = controlListForRK[n].replace('Jnt', 'Ctrl');
+        newControl = cmds.circle( name = newName );
+        cmds.setAttr( newControl[0]+'.rotateY', 90 );
+        newControlGroup = cmds.group(newControl, name = newName + 'Grp', parent = parentControl);
+        cmds.matchTransform(newControlGroup, controlListForRK[n]);
+        cmds.makeIdentity(newControl[0], apply = True);
+
+        if len(cmds.listRelatives(controlListForRK[n], children=True, type='joint')) > 1:
+            parentControl = newControl[0];
+    n += 1;
+
+#To Do Next:
 #Bind the RK to the IK and FK joints correctly
+
 #Bind each control to the correct joint
 
 #Remind user to bind joints to the mesh.
