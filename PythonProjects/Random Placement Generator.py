@@ -19,3 +19,5 @@ def RandomPlacement(numOfDupes, minX, maxX, minY, maxY, minZ, maxZ ):
 
 
 RandomPlacement(50, -10, 10, -10, 10, -10, 10);
+
+help(RandomPlacement)

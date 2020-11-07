@@ -1,5 +1,22 @@
 import maya.cmds as cmds
 
+sideOld_string = "L"
+sideNew_string = "R"
+
+name_string = "Name"
+
+number_string = "##" # indicate the max number of digits a string can go
+
+nodeGeometry_string = "Geo"
+nodeJoint_string = "Jnt"
+nodeControl_string = "Ctrl"
+nodeCtrlGroup_string = "Grp"
+
+controlTypeRK_string = "RK"
+controlTypeFK_string = "FK"
+controlTypeIK_string = "IK"
+# //////////////////////
+
 #Variables
 selectionGroupRK = cmds.ls( selection=True );
 selectionFirstJointInRK = cmds.listRelatives(selectionGroupRK[0], children=True, type='joint')[0];
