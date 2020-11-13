@@ -50,3 +50,10 @@ def SequentialRenamer(objList, nameString, renaming):
         numCount += 1
 
 SequentialRenamer(cmds.ls(selection=True), my_string, "#")
+
+##
+
+
+
+
+

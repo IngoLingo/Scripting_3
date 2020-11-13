@@ -36,9 +36,13 @@ def BuildRigGroups():
     global groupIKControls
     groupIKControls = cmds.group(empty=True, name=characterName_string + "_IKControls", parent=groupControls)
 
+
 # Functions
 #Note: add a discription to each function
+
+#old: controlSize
 def NJE_MakeControl( jointTo, parent, controlSize=controlSize, rotateDir='.rotateY', rotateNum=90):
+    controlSize += cmds.getAttr(jointTo+".radius")
     newName = jointTo.replace('Jnt', 'Ctrl')
     newControl = cmds.circle(name=newName)
     cmds.setAttr(newControl[0] + rotateDir, rotateNum)
@@ -50,6 +54,37 @@ def NJE_MakeControl( jointTo, parent, controlSize=controlSize, rotateDir='.rotat
     cmds.parent(newControlGroup, parent)
 
     return newControl[0]
+
+def NJE_CreateIKFKSwitch(fromJoint, transformCon=characterName_string+"_Transform_Ctrl"):
+    for joint in fromJoint:
+        # Make IK/FK Switch Attribute for Transform Control
+        attrName = joint.replace("_"+nodeJoint_string+"_"+controlTypeRK_string, "")+"_FK1_IK0_Switch"
+        cmds.addAttr( transformCon, longName=attrName, defaultValue=1.0, minValue=0, maxValue=1.0 )
+        cmds.setAttr(transformCon+"."+attrName, keyable=True)
+
+        # Create a reverse node for IK to connect to
+        reverseNode = cmds.shadingNode("reverse", asUtility=True, name=attrName.replace("Switch", "Reverse"))
+
+        # Hook up the nodes to the IK/FK transparencies
+        cmds.connectAttr(transformCon+"."+attrName, reverseNode+".inputX")
+        cmds.connectAttr(reverseNode+".outputX", joint.replace(nodeJoint_string, "Group").replace(controlTypeRK_string, controlTypeIK_string)+".visibility")
+        cmds.connectAttr(joint.replace(nodeJoint_string, "Group").replace(controlTypeRK_string, controlTypeIK_string)+".visibility", joint.replace(controlTypeRK_string, controlTypeIK_string)+".visibility")
+        cmds.connectAttr(transformCon + "." + attrName, joint.replace(nodeJoint_string, nodeControl_string).replace(controlTypeRK_string, controlTypeFK_string+nodeCtrlGroup_string)+".visibility")
+        cmds.connectAttr(joint.replace(nodeJoint_string, nodeControl_string).replace(controlTypeRK_string, controlTypeFK_string+nodeCtrlGroup_string)+".visibility", joint.replace(controlTypeRK_string, controlTypeFK_string)+".visibility")
+
+        # Hook up the nodes to IK/FK weights
+        constraintDecendents = cmds.listRelatives(joint, allDescendents=True, type="parentConstraint")
+        constraintDecendents += cmds.listRelatives(joint, allDescendents=True, type="scaleConstraint")
+        #rkConstraintDecendents=[]
+        for const in constraintDecendents:
+            if controlTypeRK_string in const:
+                #test_L_Clav_Jnt_RK_parentConstraint1
+                if cmds.findType(const, type="parentConstraint"):
+                    cmds.connectAttr(reverseNode + ".outputX", const+"."+const[:-1].replace(controlTypeRK_string, controlTypeIK_string).replace("_parentConstraint", "W1"))
+                    cmds.connectAttr(transformCon + "." + attrName, const+"."+const[:-1].replace(controlTypeRK_string, controlTypeFK_string).replace("_parentConstraint", "W0"))
+                if cmds.findType(const, type="scaleConstraint"):
+                    cmds.connectAttr(reverseNode + ".outputX", const+"."+const[:-1].replace(controlTypeRK_string, controlTypeIK_string).replace("_scaleConstraint", "W1"))
+                    cmds.connectAttr(transformCon + "." + attrName, const+"."+const[:-1].replace(controlTypeRK_string, controlTypeFK_string).replace("_scaleConstraint", "W0"))
 
 def NJE_MasterConstrain(constrainThis, constrainTo):
     cmds.parentConstraint(constrainThis, constrainTo)
@@ -116,6 +151,7 @@ def NJE_MirrorAndRig(baseJointList):
                     NJE_MasterConstrain(parentControl, newName)
                 else:
                     #print oldName
+                    cmds.hide(parentControl)# Hide last control, maybe delete control insted
                     cmds.delete(oldName) #Delete joint without the controlTypeRK_string
                     break
             cmds.parent(jointFK[0], groupFK)
@@ -123,15 +159,16 @@ def NJE_MirrorAndRig(baseJointList):
 
             # Work on IK joints
             # Note: IK end joints are oriented to the world (not pv control)
+            IKLimbGroup = cmds.group(empty=True, name=jointRK.replace("Jnt", "Group").replace("RK", "IK"), parent=IKControlGroup)
             jointIK = cmds.duplicate(jointRK, name=jointRK.replace(controlTypeRK_string, controlTypeIK_string), renameChildren=True) #Duplicate and rename joint
-            ikBase = NJE_MakeControl(jointIK[0], IKControlGroup)
+            ikBase = NJE_MakeControl(jointIK[0], IKLimbGroup)
             #cmds.makeIdentity(cmds.listRelatives(ikBase, parent=True), apply=True)
             for oldName in jointIK[1:]: #Renameing all joint desendents
                 if controlTypeRK_string in oldName:
                     newName = oldName.replace(controlTypeRK_string, controlTypeIK_string)[0:-1]
                     cmds.rename(oldName, newName)
                 else:
-                    ikControl = NJE_MakeControl(newName, IKControlGroup)
+                    ikControl = NJE_MakeControl(newName, IKLimbGroup)
                     #cmds.makeIdentity(cmds.listRelatives(ikControl, parent=True), apply=True)
                     ikHandle = cmds.ikHandle(name=newName+"_Handle", sj=jointIK[0], ee=newName)
                     ikHandleGroup += [ikHandle[0]]
@@ -141,18 +178,21 @@ def NJE_MirrorAndRig(baseJointList):
                     break
             cmds.parent(jointIK[0], groupIK)
             cmds.parentConstraint(ikBase, jointIK[0])
+
         # Make PV controls (note: may need to fix up)
-        print ikHandleGroup
-        pvControl = NJE_MakePVControl(newName, IKControlGroup, -controlSize)
-        print pvControl
-        print ikHandleGroup[1]
+        #print ikHandleGroup
+        pvControl = NJE_MakePVControl(newName, IKLimbGroup, -controlSize)
         cmds.poleVectorConstraint(pvControl, ikHandleGroup[1])
-        pvControl = NJE_MakePVControl(newName.replace(sideNew_string, sideOld_string), IKControlGroup)
-        print pvControl
-        print ikHandleGroup[0]
+        pvControl = NJE_MakePVControl(newName.replace(sideNew_string, sideOld_string), IKLimbGroup.replace(sideNew_string, sideOld_string))
         cmds.poleVectorConstraint(pvControl, ikHandleGroup[0])
 
         cmds.parent(allJoint, groupRK)
+
+        # Build FK/IK constrains
+        allJoint += cmds.listRelatives(allJoint, allDescendents=True, type="joint")
+        for jointRK in allJoint:
+            if controlTypeRK_string in jointRK:
+                NJE_MasterConstrain([jointRK.replace(controlTypeRK_string, controlTypeFK_string), jointRK.replace(controlTypeRK_string, controlTypeIK_string)], jointRK)
 
 def NJE_Rig(baseJointList, RKJointList):
     parent = groupControls
@@ -174,15 +214,19 @@ def NJE_Rig(baseJointList, RKJointList):
 
     # Make controls for joints at the end of RK joints then constrain
     for joint in RKJointList:
-        parent = cmds.listRelatives(joint, parent=True)[0].replace(nodeJoint_string, nodeControl_string)
+        #parent = cmds.listRelatives(joint, parent=True)[0].replace(nodeJoint_string, nodeControl_string)
         jointList = cmds.listRelatives(joint, allDescendents=True)
         jointList.reverse()
         parent = parentCOG
+        jntList=[]
         for jnt in jointList:
             if controlTypeRK_string not in jnt:
                 # Note: Need to make digets auto control
+                jntList += [jnt]
                 parent = NJE_MakeControl(jnt, parent)
                 NJE_MasterConstrain(parent, jnt)
+
+        NJE_MasterConstrain(cmds.listRelatives(jntList[0], parent=True), jntList[0].replace(nodeJoint_string, nodeControl_string+nodeCtrlGroup_string))
 
     cmds.parent(groupFKControls, parentCOG)
     cmds.parent(groupIKControls, parentCOG)
@@ -227,27 +271,13 @@ def NJE_SortJointAndRig(selectionCOG):
             notRKJoints += [jnt]
     #print RKJoints
     NJE_Rig(notRKJoints, RKJoints)
+    NJE_CreateIKFKSwitch(RKJoints)
 
 NJE_SortJointAndRig(cmds.ls(selection=True))
 
 
+## Test_L_Arm_02_Jnt_RK > Test_L_Wrist_CtrlGrp
 
-#print cmds.ls(selection=True)
-#NJE_MirrorAndRig(cmds.ls(selection=True))
-
-
-
-
-
-
-# CONTROLS
-#parentControl = cmds.group( empty = True, name = 'IK_Control_Group' )
-#masterControlGroup = parentControl
-
-#NJE_MakeControl( "L_Arm_01_Jnt_RK", parentControl)
-
-
-#def NJE_AutoControls():
 
 
 
