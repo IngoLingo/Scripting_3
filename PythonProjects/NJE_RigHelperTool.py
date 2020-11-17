@@ -19,7 +19,7 @@ controlTypeRK_string = "RK"
 controlTypeFK_string = "FK"
 controlTypeIK_string = "IK"
 
-controlSize = 0.25
+controlSize = 5
 
 def BuildRigGroups():
     # check to see if each of these groups exist and create them if not
@@ -55,6 +55,37 @@ def NJE_MakeControl( jointTo, parent, controlSize=controlSize, rotateDir='.rotat
 
     return newControl[0]
 
+def NJE_MakeTransformControl(parent, controlSize=10*controlSize, rotateDir='.rotateX', rotateNum=90):
+    newName = characterName_string+"_Transform_Ctrl"
+    newControl = cmds.circle(name=newName)
+    cmds.setAttr(newControl[0] + rotateDir, rotateNum)
+    cmds.xform(newControl[0], scale=(controlSize, controlSize, controlSize))
+    newControlGroup = cmds.group(newControl, name=newName + 'Grp')
+    cmds.makeIdentity(newControl[0], apply=True)
+    cmds.delete(newControl[0], constructionHistory=True)
+    cmds.parent(newControlGroup, parent)
+
+    return newControl[0]
+
+def NJE_MakePVControl( jointTo, parent, controlSize=controlSize): #Make an IK PV control for the IK joints and orient them properly
+    newName = cmds.listRelatives(jointTo, parent=True)[0].replace('Jnt', 'PV_Offset_Grp')
+    newPV = cmds.circle(name=newName)
+    selectShapeNode = cmds.listRelatives(newPV[0], shapes=True)
+    cmds.delete(selectShapeNode)
+    newName = cmds.listRelatives(jointTo, parent=True)[0].replace('Jnt', 'PV_Ctrl')
+    newControl = cmds.circle(name=newName)
+    cmds.xform(newControl[0], scale=(controlSize, controlSize, controlSize))
+    #cmds.select(newControl.cv.[0,2,4,6])
+    #cmds.scale( newControl.cv.[0,2,4,6], relative = True, pivot = (-9, 0, 0) )
+    cmds.parent(newControl, newPV)# Warning: Cannot parent components or objects in the underworld. #
+    newControlGroup = cmds.group(newPV, name=newName + 'Grp', parent=parent)
+    cmds.matchTransform(newControlGroup, cmds.listRelatives(jointTo, parent=True))
+    cmds.xform(newPV[0], translation=(0, -10*controlSize, 0))
+    cmds.makeIdentity(newControl[0], apply=True)
+    cmds.delete(newControl[0], constructionHistory=True)
+
+    return newName
+
 def NJE_CreateIKFKSwitch(fromJoint, transformCon=characterName_string+"_Transform_Ctrl"):
     for joint in fromJoint:
         # Make IK/FK Switch Attribute for Transform Control
@@ -89,37 +120,6 @@ def NJE_CreateIKFKSwitch(fromJoint, transformCon=characterName_string+"_Transfor
 def NJE_MasterConstrain(constrainThis, constrainTo):
     cmds.parentConstraint(constrainThis, constrainTo)
     cmds.scaleConstraint(constrainThis, constrainTo)
-
-def NJE_MakeTransformControl(parent, controlSize=10*controlSize, rotateDir='.rotateX', rotateNum=90):
-    newName = characterName_string+"_Transform_Ctrl"
-    newControl = cmds.circle(name=newName)
-    cmds.setAttr(newControl[0] + rotateDir, rotateNum)
-    cmds.xform(newControl[0], scale=(controlSize, controlSize, controlSize))
-    newControlGroup = cmds.group(newControl, name=newName + 'Grp')
-    cmds.makeIdentity(newControl[0], apply=True)
-    cmds.delete(newControl[0], constructionHistory=True)
-    cmds.parent(newControlGroup, parent)
-
-    return newControl[0]
-
-def NJE_MakePVControl( jointTo, parent, controlSize=controlSize): #Make an IK PV control for the IK joints and orient them properly
-    newName = cmds.listRelatives(jointTo, parent=True)[0].replace('Jnt', 'PV_Offset_Grp')
-    newPV = cmds.circle(name=newName)
-    selectShapeNode = cmds.listRelatives(newPV[0], shapes=True)
-    cmds.delete(selectShapeNode)
-    newName = cmds.listRelatives(jointTo, parent=True)[0].replace('Jnt', 'PV_Ctrl')
-    newControl = cmds.circle(name=newName)
-    cmds.xform(newControl[0], scale=(controlSize, controlSize, controlSize))
-    #cmds.select(newControl.cv.[0,2,4,6])
-    #cmds.scale( newControl.cv.[0,2,4,6], relative = True, pivot = (-9, 0, 0) )
-    cmds.parent(newControl, newPV)# Warning: Cannot parent components or objects in the underworld. #
-    newControlGroup = cmds.group(newPV, name=newName + 'Grp', parent=parent)
-    cmds.matchTransform(newControlGroup, cmds.listRelatives(jointTo, parent=True))
-    cmds.xform(newPV[0], translation=(0, -10*controlSize, 0))
-    cmds.makeIdentity(newControl[0], apply=True)
-    cmds.delete(newControl[0], constructionHistory=True)
-
-    return newName
 
 def NJE_MirrorAndRig(baseJointList):
     for joint in baseJointList:
@@ -226,7 +226,20 @@ def NJE_Rig(baseJointList, RKJointList):
                 parent = NJE_MakeControl(jnt, parent)
                 NJE_MasterConstrain(parent, jnt)
 
+        # Constrains begining RK joints to parent of that RK joint's control group
+        #NJE_MasterConstrain(cmds.listRelatives(jntList[0], parent=True), jntList[0].replace(nodeJoint_string, nodeControl_string + nodeCtrlGroup_string))
+        print cmds.listRelatives(RKJointList[0], parent=True) #parent of joint at the begining of RK
+        print RKJointList[0].replace(nodeJoint_string, nodeControl_string).replace(controlTypeRK_string, controlTypeFK_string + nodeCtrlGroup_string)#FKControl group of the begining RK joint
+        print RKJointList[0].replace(nodeJoint_string, nodeControl_string).replace(controlTypeRK_string, controlTypeIK_string + nodeCtrlGroup_string)#IKControl group of the begining RK joint
+
+        #Test_Pelvis_Jnt
+        #Test_R_Hip_Ctrl_FKGrp
+        #Test_R_Hip_Ctrl_IKGrp
+
+
+        # Constrains joints after RK joints to end of RK joint's control group
         NJE_MasterConstrain(cmds.listRelatives(jntList[0], parent=True), jntList[0].replace(nodeJoint_string, nodeControl_string+nodeCtrlGroup_string))
+
 
     cmds.parent(groupFKControls, parentCOG)
     cmds.parent(groupIKControls, parentCOG)

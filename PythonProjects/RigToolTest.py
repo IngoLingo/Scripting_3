@@ -1,5 +1,30 @@
 import maya.cmds as cmds
 
+# NOTES for next revision
+# Mirror function (just mirrors all limb joints)
+
+# Make Transform Control Function (makes transform control and control group from cog joint, resize to joint radius*10, returns the control )
+# Make Control Function (makes control and control group from joint, resize to joint radius*2, returns the control )
+# Make PV Control Function (makes a PV control based on elbow/knee joint, resizes control to be jont radius*2, distance based on joint radius*25, returns the control )
+# MasterConstrain Function (dose both parent and scale constrains between two objects)
+# Make FK Joints (Makes FK joints and MasterConstrain Function, returns FK joint)
+# Make IK Joints (Makes IK joints and MasterConstrain Function, returns FK joint)
+# Make IKFK Switch Function (Makes an IKFK switch attribute for transform control and a reverse node, Takes IK joints and puts them through the revers node and then the IK and FK joint to the IKFK switch attribute, and also hooks up switch attribute to the transparencies)
+
+# Rig Regular (make and constrain controls for all non RK joints. Use: Make Transform Control, Make Control, Master Constrain)
+# Rig FKIKs (make and constrain IK/FK controls and IK/FK joints for all RK joints. Use: Make Control, Master Constrain, Make FK Joints, Make IK Joints, Make IKFK Switch Function)
+
+#
+#
+#
+#
+#
+
+
+
+
+
+
 #Variables
 selectionGroupRK = cmds.ls( selection=True );
 selectionFirstJointInRK = cmds.listRelatives(selectionGroupRK[0], children=True, type='joint')[0];
