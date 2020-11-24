@@ -29,7 +29,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/MayaDevKit_2020/py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -72,7 +72,8 @@
       <workItem from="1605100106315" duration="30933000" />
       <workItem from="1605296215972" duration="6287000" />
       <workItem from="1605305736594" duration="5574000" />
-      <workItem from="1605638251880" duration="1931000" />
+      <workItem from="1605638251880" duration="8570000" />
+      <workItem from="1606245538948" duration="11332000" />
     </task>
     <servers />
   </component>

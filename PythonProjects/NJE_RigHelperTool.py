@@ -1,7 +1,7 @@
 import maya.cmds as cmds
 
 # Naming convention vars
-characterName_string = "Baby"
+characterName_string = "Test"
 
 sideOld_string = "L"
 sideNew_string = "R"
