@@ -3,23 +3,28 @@ import maya.cmds as cmds
 # Naming convention vars
 characterName_string = "Test"
 
+#Possition
 sideOld_string = "L"
 sideNew_string = "R"
 
 name_string = "Name"
-
 number_string = "##"# indicate the max number of digits a string can go
 
+#Type
 nodeGeometry_string = "Geo"
 nodeJoint_string = "Jnt"
 nodeControl_string = "Ctrl"
 nodeCtrlGroup_string = "Grp"
 
+#Control System
 controlTypeRK_string = "RK"
 controlTypeFK_string = "FK"
 controlTypeIK_string = "IK"
 
-controlSize = 5
+controlSize = 1
+#Name Convention for Joints: Possition_BodyPart_PartNumber_Type_ControlSystem
+#Example: L_Arm_01_Jnt_RK
+
 
 def BuildRigGroups():
     # check to see if each of these groups exist and create them if not
