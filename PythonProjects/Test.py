@@ -1,54 +1,47 @@
 import maya.cmds as cmds
 
-name_string = 'Cube_###_Obj'
 
-char_list = list(name_string)
+class RenamerUI():
+    def __init__(self):
+        self.my_window = 'toolWindow'
 
-sels = cmds.ls(sl=True)
+    def create(self):
+        self.delete()
 
-# returns the number of '#'
-hash_num = name_string.count('#')
+        self.my_window = cmds.window(self.my_window,
+                                     title='coolWindow',
+                                     widthHeight=(200, 200))
+        self.col_layout = cmds.columnLayout(parent=self.my_window,
+                                            adjustableColumn=True)
+        self.name_field = cmds.textField(parent=self.col_layout,
+                                         placeholderText='Name of new obj')
+        cmds.button(parent=self.col_layout, label='sphere', c='createSphere()')
+        cmds.button(parent=self.col_layout, label='sphere',
+                    c='print cmds.textField(name_field, q=True, text=true')
 
-# returns ('Cube_', '###', '_Obj')
-parts = name_string.partition('#' * hash_num)
+        cmds.showWindow(self.my_window)
 
-# returns the first instances index 5
-piece = name_string.find("#")
-print 'piece starts as ', piece
+    def delete(self):
+        if cmds.window(self.my_window, exists=True):
+            cmds.deleteUI(self.my_window)
+    #
+    # def createSphere(self):
+    #     field_val = cmds.textField(self.name_field, q=True, text=True)
+    #     cmds.polySphere(name=field_val)
 
-# returns last index location of # 7
-index_num = (piece + hash_num)
-print 'index number: ', index_num
 
-hash_list = []
-end_hash = index_num - 1
+my_window = RenamerUI()
+my_window.create()
 
-for i in range(piece, end_hash, 1):
-    hash = char_list.pop(i)
-    hash_list.extend(hash)
-    print 'i is', i, 'popped characters ', hash
 
-new_name_string = ''.join(char_list)
-print new_name_string
 
-replace_num_string = '1'
-replace_num_int = 1
-replace_index = (name_string[piece : index_num])
-print 'replace index ', replace_index
+#Go over List:
 
-final_name_string = ""
-if parts[1]:
-    print 'Characters are sequential'
-    for s in sels:
-        new_num = replace_num_string.zfill(hash_num)
-        print 'the new num is', new_num
-        final_name_string = new_name_string.replace('#', new_num)
-        print 'the new name is ', final_name_string
-        print 'the replace num is ', type(replace_num_int)
-        replace_num_int += 1
-        print 'the replace num is ', replace_num_int
-        replace_num_string = str(replace_num_int)
-        cmds.rename(final_name_string)
-        replace_num = str(replace_num)
-else:
-    cmds.error('Characters are not sequential. Input another string.')
+#Joints without IK FK
+#   Make sure joints are oriented correctly (if not, its supper easy to go back and re-run the script)
+#   Need to specify the joint name to the script
+#   Watch out for having to manualy put the control group inside the transform group
+
+#Joints With IK FK
+#   Names have to be in a spicific order
+#   Only use this if you want to mirror and IK/FK a rig
