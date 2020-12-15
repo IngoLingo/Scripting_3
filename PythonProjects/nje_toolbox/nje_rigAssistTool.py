@@ -6,8 +6,14 @@ class RigAssistUI():
 
     def create(self):
         self.delete()
-        self.my_window = cmds.window(self.my_window, title="NJE Rig Assist Tool Window", widthHeight=(300, 400))
-        self.col_layout = cmds.rowColumnLayout(parent=self.my_window, numberOfColumns=2, columnWidth=[(1, 100), (2, 100)])
+        self.my_window = cmds.window(self.my_window, title="NJE Rig Assist Tool Window", widthHeight=(400, 400))
+
+        self.col_layout = cmds.columnLayout(parent=self.my_window)
+        #Build text fields
+        cmds.text(parent=self.col_layout, align="left", label='NOTEICE!:\n This script is still a work in progress.\n If you want to save time, see the video link in assignment comments.\n')
+        cmds.text(parent=self.col_layout, align="left", label='Instructions:\n Possition, parent, name, and orient all non-RK/FK/IK joints.\n If you are doing limbs with FK/IK systems,\n Build only the left side of the RK joints \n Make sure the limbs are named like this "L_Name_Jnt_RK"\n All nonFK/IK joints should be named like this "Name_Jnt"\n Finaly select the base joint and hit "Build".\n \nFor a video explanation: \nhttps://www.youtube.com/watch?v=JAbzX_BYVhA&feature=emb_logo\n')
+
+        self.col_layout = cmds.rowColumnLayout(parent=self.my_window, numberOfColumns=2, columnWidth=[(1, 150), (2, 100)])
 
         # Input Fields
 
@@ -21,30 +27,34 @@ class RigAssistUI():
         #cmds.text(label='Geometry Indicator')
         #self.sideOld_string = cmds.textField(parent=self.col_layout, insertText="Geo")
         cmds.text(label='Joint Indicator')
-        self.sideNew_string = cmds.textField(parent=self.col_layout, insertText="Jnt")
+        self.nodeJoint_string = cmds.textField(parent=self.col_layout, insertText="Jnt")
         cmds.text(label='Control Indicator')
-        self.sideOld_string = cmds.textField(parent=self.col_layout, insertText="Ctrl")
+        self.nodeControl_string = cmds.textField(parent=self.col_layout, insertText="Ctrl")
         cmds.text(label='Group Indicator')
-        self.sideNew_string = cmds.textField(parent=self.col_layout, insertText="Grp")
+        self.nodeCtrlGroup_string = cmds.textField(parent=self.col_layout, insertText="Grp")
 
         # Control System
         cmds.text(label='RK Indicator')
-        self.sideNew_string = cmds.textField(parent=self.col_layout, insertText="RK")
+        self.controlTypeRK_string = cmds.textField(parent=self.col_layout, insertText="RK")
         cmds.text(label='FK Indicator')
-        self.sideOld_string = cmds.textField(parent=self.col_layout, insertText="FK")
+        self.controlTypeFK_string = cmds.textField(parent=self.col_layout, insertText="FK")
         cmds.text(label='IK Indicator')
-        self.sideNew_string = cmds.textField(parent=self.col_layout, insertText="IK")
+        self.controlTypeIK_string = cmds.textField(parent=self.col_layout, insertText="IK")
 
-        cmds.text(label='Control Size Multiplier')
-        self.controlSize_field = cmds.intField(parent=self.col_layout, minValue=1, value=1)
+        #cmds.text(label='Control Size Multiplier')
+        #self.controlSize_field = cmds.intField(parent=self.col_layout, minValue=1, value=1)
 
         # Buttons
-        cmds.text(label='FK/IK System')
-        cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.buildFKIK())
-        cmds.text(label='Just Controls')
-        cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.buildControls())
-        cmds.text(label='Mirror Limb')
-        cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.mirrorLimb())
+        #cmds.text(label='FK/IK System')
+        #cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.buildFKIK())
+        #cmds.text(label='Just Controls')
+        #cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.buildControls())
+        #cmds.text(label='Mirror Limb')
+        #cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.mirrorLimb())
+        cmds.text(label='')
+        cmds.text(label='')
+        cmds.text(label='')
+        cmds.button(parent=self.col_layout, label="Build", c=lambda *args: self.doAll())
 
         cmds.showWindow(self.my_window)
         # end of def create
@@ -70,24 +80,25 @@ class RigAssistUI():
         characterName_string = "Test"
 
         #Possition
-        sideOld_string = "L"
-        sideNew_string = "R"
+        sideOld_string = self.sideOld_string
+        sideNew_string = self.sideNew_string
 
-        name_string = "Name"
-        number_string = "##"# indicate the max number of digits a string can go
+        #name_string = "Name"
+        #number_string = "##"# indicate the max number of digits a string can go
 
         #Type
-        nodeGeometry_string = "Geo"
-        nodeJoint_string = "Jnt"
-        nodeControl_string = "Ctrl"
-        nodeCtrlGroup_string = "Grp"
+        #nodeGeometry_string = self.nodeGeometry_string
+        nodeJoint_string = self.nodeJoint_string
+        nodeControl_string = self.nodeControl_string
+        nodeCtrlGroup_string = self.nodeCtrlGroup_string
 
         #Control System
-        controlTypeRK_string = "RK"
-        controlTypeFK_string = "FK"
-        controlTypeIK_string = "IK"
+        controlTypeRK_string = self.controlTypeRK_string
+        controlTypeFK_string = self.controlTypeFK_string
+        controlTypeIK_string = self.controlTypeIK_string
 
         controlSize = 1
+        print controlSize
         #Name Convention for Joints: Possition_BodyPart_PartNumber_Type_ControlSystem
         #Example: L_Arm_01_Jnt_RK
 

@@ -13,7 +13,7 @@ class SequentialRenamerUI():
         self.col_layout = cmds.columnLayout(parent=self.my_window)
 
         #Build text fields
-        cmds.text(parent=self.col_layout, label='Select object(s) to rename and give a name that has # for the number seuence.')
+        cmds.text(parent=self.col_layout, align="left", label='Instructions:\n Select object(s) to rename and give a name that has # for the number seuence.\n')
         self.name_field = cmds.textField(parent=self.col_layout, placeholderText="Name for Object Sequence...")
         #self.replace_field = cmds.textField(parent=self.col_layout, placeholderText="Character to Replace...")
 

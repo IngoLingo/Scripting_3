@@ -10,6 +10,10 @@ class RandomPlacementUI():
 
         self.my_window = cmds.window(self.my_window, title="Random Placement Window", widthHeight=(300, 400))
 
+        self.col_layout = cmds.columnLayout(parent=self.my_window)
+        #Build text fields
+        cmds.text(parent=self.col_layout, align="left", label='Instructions:\n Select the object(s) you want create clones of.\n Then the number of times to clone randomly within the selected range.\n')
+
         self.col_layout = cmds.rowColumnLayout(parent=self.my_window, numberOfColumns=2, columnWidth=[(1, 100), (2, 100)])
 
         cmds.text(label='Number of Dupes')
